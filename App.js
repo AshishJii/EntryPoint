@@ -1,6 +1,6 @@
 
 import { StatusBar } from 'expo-status-bar';
-import { Button, Input, TextInput, TouchableOpacity, StyleSheet, Text, View, ToastAndroid, Linking, Modal} from 'react-native';
+import { Button, Input, TextInput, TouchableOpacity, StyleSheet, Text, View, ToastAndroid, Linking, Modal, ScrollView} from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 import { useState, useRef, createContext, useContext } from 'react';
@@ -100,7 +100,7 @@ export default function App() {
         </CameraView>
 
         {/* List view */}
-        <View style={{flex: 1}}>
+        <ScannedView style={{flex: 1}}>
           {
           scannedList.length === 0 ? (
             <Text style={styles.text}>No item scanned</Text>
@@ -109,7 +109,7 @@ export default function App() {
               <ScannedItem key={idx} data={item}/>
             ))
           }
-        </View>
+        </ScannedView>
 
         {/* Other not important things*/}
         <InfoModal />
