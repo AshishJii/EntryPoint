@@ -100,7 +100,7 @@ export default function App() {
         </CameraView>
 
         {/* List view */}
-        <ScannedView style={{flex: 1}}>
+        <ScrollView style={{flex: 1}}>
           {
           scannedList.length === 0 ? (
             <Text style={styles.text}>No item scanned</Text>
@@ -109,7 +109,7 @@ export default function App() {
               <ScannedItem key={idx} data={item}/>
             ))
           }
-        </ScannedView>
+        </ScrollView>
 
         {/* Other not important things*/}
         <InfoModal />
