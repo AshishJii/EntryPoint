@@ -1,9 +1,9 @@
 
 import { StatusBar } from 'expo-status-bar';
-import { Button, Input, TextInput, TouchableOpacity, StyleSheet, Text, View, ToastAndroid, Linking, Modal, ScrollView} from 'react-native';
+import { Button, TextInput, TouchableOpacity, Text, View, ToastAndroid, Linking, Modal, FlatList} from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
-import { useState, useRef, createContext, useContext } from 'react';
+import { useState, useRef, createContext, useContext, useEffect } from 'react';
 import ScannedItem from './components/scannedItem';
 import { AntDesign } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
@@ -18,8 +18,44 @@ export default function App() {
   const [secretKey, setSecretKey] = useState('TechnicalTeam')
   const [isInfoVisible, setInfoVisible] = useState(false);
   const lastScannedTime = useRef(0);
-  const SCAN_DELAY = 1500;
-  const attendeesFileUri = FileSystem.documentDirectory + 'Attendence.txt';
+  const SCAN_DELAY = 500;
+  const attendeesFileUri = FileSystem.documentDirectory + 'Attendence.csv';
+  const flatListRef = useRef(null);
+
+  useEffect(() => {
+    loadCSV();
+  },[])
+
+  // loads the initial csv file
+  const loadCSV = async () => {
+    // Check for file presence
+    const fileInfo = await FileSystem.getInfoAsync(attendeesFileUri);
+    console.log('File Exists? '+fileInfo.exists);
+    if(!fileInfo.exists){
+      await FileSystem.writeAsStringAsync(attendeesFileUri, '');
+      console.log('File created: '+attendeesFileUri)
+      const header = 'Time,ID'; // CSV header
+      await FileSystem.writeAsStringAsync(attendeesFileUri, header);
+      console.log('Attendees file created');
+    }
+    
+    // load data to array
+    const data = await FileSystem.readAsStringAsync(attendeesFileUri);
+    const rows = data.split('\n');
+    const parsedData = rows.map(row => {
+      const values = row.split(',');
+      return values;
+    });
+    console.log(JSON.stringify(parsedData));
+    setScannedList(parsedData);
+  }
+
+  const updateCSV = async (newData) => {
+    let newRow = newData.join(',');
+    let fileData = await FileSystem.readAsStringAsync(attendeesFileUri, {encoding: FileSystem.EncodingType.UTF8});
+    const newFileData = fileData + '\n' + newRow;
+    await FileSystem.writeAsStringAsync(attendeesFileUri, newFileData);
+  }
 
   // if no camera, exit
   if(!permission){
@@ -59,29 +95,26 @@ export default function App() {
       }
     }
 
-    // Check if already in list
-    if(scannedList.includes(JSON.stringify(data))){
-      ToastAndroid.show('Already Present', ToastAndroid.SHORT);
-      return;
-    }
-    
-    // Check for file presence
-    const fileInfo = await FileSystem.getInfoAsync(attendeesFileUri);
-    console.log('File Exists? '+fileInfo.exists);
-    if(!fileInfo.exists){
-      await FileSystem.writeAsStringAsync(attendeesFileUri, '');
-      console.log('File created: '+attendeesFileUri)
-    }
+    // NOT WORKING: Check if already in list
+    // if(scannedList.includes(JSON.stringify(data))){
+    //   ToastAndroid.show('Already Present', ToastAndroid.SHORT);
+    //   return;
+    // }
 
-    //Write in file
-    let fileData = await FileSystem.readAsStringAsync(attendeesFileUri, {encoding: FileSystem.EncodingType.UTF8})
-    const newData = fileData + JSON.stringify(data) + '\n';
-    await FileSystem.writeAsStringAsync(attendeesFileUri, newData);
+    //create new row
+    console.log(lastScannedTime.current);
+    const dt = new Date(lastScannedTime.current).toLocaleString().replace(', ',' ');
+    console.log(dt);
+    const newRow = [dt, JSON.stringify(data)];
 
-    //Update list
+    //Update csvfile and list array 
+    updateCSV(newRow);
     setScannedList((list) => {
-      return [JSON.stringify(data), ...list];
+      return [...list, newRow];
     });
+    setTimeout(()=>{  // this feels wrong, but is important to make sure re-render happens before scroll
+      flatListRef.current?.scrollToEnd({ animated: true });
+    },100);
 
     //Toast🍻
     ToastAndroid.show(JSON.stringify(data).substring(0,10)+' added', ToastAndroid.SHORT);
@@ -100,17 +133,15 @@ export default function App() {
         </CameraView>
 
         {/* List view */}
-        <ScrollView style={{flex: 1}}>
-          {
-          scannedList.length === 0 ? (
-            <Text style={styles.text}>No item scanned</Text>
-            ) : 
-            scannedList.map((item, idx) => (
-              <ScannedItem key={idx} data={item}/>
-            ))
-          }
-        </ScrollView>
 
+        <FlatList style={{flex: 1}}
+        ref={flatListRef}
+          data={scannedList}
+          renderItem={(data) => <ScannedItem data={data}/>}
+          keyExtractor={(data,idx) => idx}
+          inverted
+        />
+  
         {/* Other not important things*/}
         <InfoModal />
         <InfoButton />
@@ -176,4 +207,3 @@ function ShareButton(){
     </TouchableOpacity>
   )
 }
-
