@@ -17,8 +17,11 @@ export default function App() {
   const [scannedList, setScannedList] = useState([]);
   const [secretKey, setSecretKey] = useState('TechnicalTeam')
   const [isInfoVisible, setInfoVisible] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false)
+  const [overlayColor, setOverlayColor] = useState(null);
+
   const lastScannedTime = useRef(0);
-  const SCAN_DELAY = 500;
+  const SCAN_DELAY = 1500;
   const attendeesFileUri = FileSystem.documentDirectory + 'Attendence.csv';
   const flatListRef = useRef(null);
 
@@ -91,15 +94,23 @@ export default function App() {
     } catch (e) {
       if(e.message == 'Invalid token signature'){
         ToastAndroid.show('Invalid QR', ToastAndroid.SHORT)
+        setOverlayColor("red")
+        setTimeout(() => setOverlayColor(null), 500);
         return;
       }
     }
 
-    // NOT WORKING: Check if already in list
-    // if(scannedList.includes(JSON.stringify(data))){
-    //   ToastAndroid.show('Already Present', ToastAndroid.SHORT);
-    //   return;
-    // }
+    const index = scannedList.findIndex(e => e[1] === JSON.stringify(data));
+    if(index>-1){
+      ToastAndroid.show('Already Present', ToastAndroid.SHORT);
+      setOverlayColor("red");
+      setTimeout(() => setOverlayColor(null), 500);
+      return;
+    }
+    
+    // Show green overlay briefly
+    setOverlayColor("green");
+    setTimeout(() => setOverlayColor(null), 500); // Reset after 500ms
 
     //create new row
     console.log(lastScannedTime.current);
@@ -131,6 +142,9 @@ export default function App() {
           }}
           onBarcodeScanned={listItem}>
         </CameraView>
+
+        {overlayColor === "green" && <View style={styles.overlayGreen} />}
+        {overlayColor === "red" && <View style={styles.overlayRed} />}
 
         {/* List view */}
 

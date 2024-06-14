@@ -8,6 +8,20 @@ export default styles = StyleSheet.create({
     camera: {
       flex: 1,
     },
+    overlay: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'transparent', // Default transparent background
+    },
+    overlayGreen: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(0, 255, 0, 0.5)', // Semi-transparent green
+      zIndex: 1,
+    },
+    overlayRed: {
+      ...StyleSheet.absoluteFillObject,
+      backgroundColor: 'rgba(255, 0, 0, 0.5)', // Semi-transparent red
+      zIndex: 1,
+    },
     infoButton: {
       position: 'absolute',
       top: 30,
