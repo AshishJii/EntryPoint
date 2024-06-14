@@ -49,7 +49,7 @@ export default function App() {
       const values = row.split(',');
       return values;
     });
-    console.log(JSON.stringify(parsedData));
+    // console.log(JSON.stringify(parsedData));
     setScannedList(parsedData);
   }
 
@@ -141,6 +141,7 @@ export default function App() {
             barcodeTypes: ["qr"],
           }}
           onBarcodeScanned={listItem}>
+            <View style={styles.camOverlay}/>
         </CameraView>
 
         {overlayColor === "green" && <View style={styles.overlayGreen} />}
