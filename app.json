@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "EntryPoint",
-    "slug": "Entry-point",
+    "slug": "EntryCheck",
     "version": "1.0.0",
     "scheme": "entry-point",
     "orientation": "portrait",
@@ -27,7 +27,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "Hidden"
+        "projectId": "64f92cff-9314-4384-ae12-f0ca0a6c956d"
       }
     },
     "plugins": [
