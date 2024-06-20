@@ -16,7 +16,7 @@ export default styles = StyleSheet.create({
       bottom: 0,
       borderColor: 'rgba(90, 90, 90, 0.5)',
       borderWidth: 110,
-      borderEndEndRadius: 11,
+      borderEndEndRadius: 11, // ⚠️ This is a workaround. Otherwise borders overlap create a 
       borderStyle: "solid",
       backgroundColor: 'rgba(0, 0, 0, 0.1)',
     },

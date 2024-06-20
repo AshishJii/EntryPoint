@@ -4,11 +4,11 @@ import { Button, TextInput, TouchableOpacity, Text, View, ToastAndroid, Linking,
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
 import { useState, useRef, createContext, useContext, useEffect } from 'react';
-import ScannedItem from './components/scannedItem';
+import ScannedItem from './../components/scannedItem';
 import { AntDesign } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
 import JWT, { SupportedAlgorithms } from 'expo-jwt';
-import styles from './styles/styles';
+import styles from './../styles/styles';
 
 const AppContext = createContext();
 

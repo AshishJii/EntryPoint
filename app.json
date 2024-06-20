@@ -1,8 +1,9 @@
 {
   "expo": {
-    "name": "EntryCheck",
-    "slug": "EntryCheck",
+    "name": "EntryPoint",
+    "slug": "Entry-point",
     "version": "1.0.0",
+    "scheme": "entry-point",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -23,6 +24,14 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "Hidden"
+      }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
