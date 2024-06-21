@@ -25,13 +25,16 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "64f92cff-9314-4384-ae12-f0ca0a6c956d"
-      }
-    },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "fcdbaf0c-5562-49e6-8781-d917350d2612"
+      }
+    }
   }
 }
