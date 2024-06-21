@@ -1,14 +1,15 @@
 
-import { StatusBar } from 'expo-status-bar';
+import { useState, useRef, createContext, useContext, useEffect } from 'react';
 import { Button, TextInput, TouchableOpacity, Text, View, ToastAndroid, Linking, Modal, FlatList} from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as FileSystem from 'expo-file-system';
-import { useState, useRef, createContext, useContext, useEffect } from 'react';
-import ScannedItem from './../components/scannedItem';
+import { StatusBar } from 'expo-status-bar';
 import { AntDesign } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
-import styles from './../styles/styles';
+import JWT, { SupportedAlgorithms } from "expo-jwt";
+import ScannedItem from './../components/scannedItem';
 import CSVDataHandler from '../data/csvDataHandler';
+import styles from './../styles/styles';
 
 const AppContext = createContext();
 const attendeesFileUri = FileSystem.documentDirectory + 'Attendence.csv';
@@ -41,13 +42,13 @@ export default function App() {
     //Get QR data
     lastScannedTime.current = now;
     let token = qr.data;
-    console.log('QR data: '+token)
+    console.log('QR da: '+token)
 
     // is Valid JWT token
     let data;
     try{
-      data = JWT.decode(token, secretKey);
-      console.log(data)
+      data = await JWT.decode(token, secretKey);
+      console.log("💀💀💀"+data)
     } catch (e) {
       if(e.message == 'Invalid token signature'){
         ToastAndroid.show('Invalid QR', ToastAndroid.SHORT)
