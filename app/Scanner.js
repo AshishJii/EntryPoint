@@ -15,7 +15,7 @@ const AppContext = createContext();
 const attendeesFileUri = FileSystem.documentDirectory + 'Attendence.csv';
 const dataHandler = new CSVDataHandler(attendeesFileUri);
 
-export default function App() {
+export default function Page() {
   const [scannedList, setScannedList] = useState([]);
   const [secretKey, setSecretKey] = useState('TechnicalTeam')
   const [isInfoVisible, setInfoVisible] = useState(false);
@@ -48,7 +48,6 @@ export default function App() {
     let data;
     try{
       data = await JWT.decode(token, secretKey);
-      console.log("💀💀💀"+data)
     } catch (e) {
       if(e.message == 'Invalid token signature'){
         ToastAndroid.show('Invalid QR', ToastAndroid.SHORT)
