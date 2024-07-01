@@ -8,6 +8,18 @@ import SQLiteDbHandler from '../data/SQLiteDbHandler';
 const dbHandler = new SQLiteDbHandler();
 
 export default function Page() {
+    return (
+    <View style={styles.container}>
+        <Link href='/Qr' style={styles.link}>Generate QR 📄</Link>
+        <Link href='/Email' style={styles.link}>Send Mail 📨</Link>
+        <Link href='/Scanner' style={styles.link}>Scan Entry 📷</Link>
+        {/* Only for Debugging purposes. Remove afterwards */}
+        <DebugMenu />
+    </View>
+    )
+}
+
+function DebugMenu(){
     const [modalVisible, setModalVisible] = useState(false);
     const [modalData, setModalData] = useState([]);
     const [modalTitle, setModalTitle] = useState("");
@@ -17,19 +29,22 @@ export default function Page() {
         setModalVisible(true);
     };
 
-    return (
-    <View style={styles.container}>
-        <Link href='/Qr' style={styles.link}>Generate QR 📄</Link>
-        <Link href='/Email' style={styles.link}>Send Mail 📨</Link>
-        <Link href='/Scanner' style={styles.link}>Scan Entry 📷</Link>
+    async function pickCSV(){
+        console.log('Importing csv');
+        const doc = await DocumentPicker.getDocumentAsync();
+        if(doc.canceled == false){
+            console.log(doc.assets);
+            let data = await FileSystem.readAsStringAsync(doc.assets[0].uri);
+            dbHandler.saveRegistrations(data).then(() => ToastAndroid.show('CSV Imported', ToastAndroid.SHORT));
+        }
+    }
 
-        {/* below part is only for debugging and should be deleted afterwards */}
-        <Text>Imported csv MUST have columns Name, Roll, Email</Text>
-        <View style={{padding: 20, backgroundColor: "#ddd"}}>
+    return (
+        <View style={{position: 'absolute', bottom: 0, padding: 20, margin: 40, backgroundColor: "#ddd"}}>
             <Text>Debugging options:</Text>
             <Button 
             title='Import CSV' 
-            onPress={pickDocument} 
+            onPress={pickCSV} 
             />
             <Button 
             title='Get registrations' 
@@ -44,7 +59,6 @@ export default function Page() {
             title='Clear Table⚠️' 
             onPress={async () => {const res = await dbHandler.resetTable(); if(res.success) ToastAndroid.show('Database cleared', ToastAndroid.SHORT);}}
             />
-
 
             <Modal
                 animationType="slide"
@@ -64,8 +78,8 @@ export default function Page() {
                     </View>
                 </View>
             </Modal>
+            <Text>Imported csv MUST have Name, Roll, Email columns</Text>
         </View>
-    </View>
     )
 }
 
@@ -122,13 +136,3 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
-
-async function pickDocument(){
-    console.log('importing csv');
-    const doc = await DocumentPicker.getDocumentAsync();
-    if(doc.canceled == false){
-        console.log(doc.assets);
-        let data = await FileSystem.readAsStringAsync(doc.assets[0].uri);
-        dbHandler.saveRegistrations(data);
-    }
-}
