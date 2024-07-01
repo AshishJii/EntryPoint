@@ -91,7 +91,7 @@ export default function Page() {
         <ScannedList scannedList={scannedList} flatListRef={flatListRef} />
         <InfoModal />
         <InfoButton />
-        {/* <ShareButton /> */}
+        <ShareButton />
       </View>
     </AppContext.Provider>
   );
@@ -167,10 +167,9 @@ function InfoButton(){
 
 // TODO: Fix the share button or remove it
 function ShareButton(){
-  const { attendeesFileUri } = useContext(AppContext);
-
   const fileSharer = async () => {
-    await Sharing.shareAsync(attendeesFileUri);
+    const res = await dbHandler.exportCSV();
+    await Sharing.shareAsync(res.fileUri);
   }
 
   return (

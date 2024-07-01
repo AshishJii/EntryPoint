@@ -1,6 +1,8 @@
 import * as SQLite from 'expo-sqlite';
-import DbHandler from './DbHandler';
+import * as FileSystem from 'expo-file-system';
 import * as Papa from 'papaparse';
+import DbHandler from './DbHandler';
+
 
 export default class SQLiteDbHandler extends DbHandler {
     constructor(){
@@ -108,6 +110,20 @@ export default class SQLiteDbHandler extends DbHandler {
         } catch (err) {
             console.log('Error resetting table:', err);
             return { success: false, error: err.message };
+        }
+    }
+
+    async exportCSV(){
+        try{
+            const attendees = await this.getAttendees();
+            const csv = Papa.unparse(attendees);
+            const fileUri = FileSystem.documentDirectory + 'attendees.csv';
+            await FileSystem.writeAsStringAsync(fileUri, csv);
+            return {success: true, fileUri: fileUri};
+        }
+        catch (err){
+            console.log('Error exporting Attendees csv:',err);
+            return {success: false, error: err.message};
         }
     }
 }
