@@ -36,29 +36,48 @@ export default class SQLiteDbHandler extends DbHandler {
             }
             catch(err){
                 if (err.message.includes('UNIQUE constraint failed')) {
-                    console.error('Multiple people with same ID found.\nClear the table.');                    
+                    console.log('Multiple people with same ID found.\nClear the table.');                    
                     // break;
                 } 
                 else {
-                    console.error('Unexpected error:', err);
+                    console.log('Unexpected error:', err);
                 }
             } 
+        }
+    }
+
+    async updateAttendance(id){
+        // TODO: Optimise this to increase speed
+        try {
+            const st = await this.db.getFirstAsync('SELECT name, email, attended FROM registrations WHERE id = ?', [id]);
+            if(st == null) throw new Error('Student not registered');
+            if(st.attended == 1) throw new Error('ID already Present');
+            let sta = await this.db.runAsync('UPDATE registrations SET attended = 1 WHERE id = ?', [id]);
+            console.log(sta);
+            return { success: true, data : {name: st.name , email: st.email, id: id}};
+        } catch (err) {
+            console.log('Error updating Attendees:', err);
+            return { success: false, error: err.message };
         }
     }
 
     async updateQrGenerated(id){
         try {
             await this.db.runAsync('UPDATE registrations SET qrGenerated = 1 WHERE id = ?', [id]);
+            return { success: true };
         } catch (err) {
-            console.error('Error updating QR generated status:', err);
+            console.log('Error updating QR generated status:', err);
+            return { success: false, error: err.message };
         }
     }
 
     async updateEmailSent(id){
         try {
             await this.db.runAsync('UPDATE registrations SET emailSent = 1 WHERE id = ?', [id]);
+            return { success: true };
         } catch (err) {
-            console.error('Error updating email sent status:', err);
+            console.log('Error updating email sent status:', err);
+            return { success: false, error: err.message };
         }
     }
 
@@ -67,7 +86,7 @@ export default class SQLiteDbHandler extends DbHandler {
             const results = await this.db.getAllAsync('SELECT * FROM registrations');
             return results;
         } catch (err) {
-            console.error('Error fetching registrations:', err);
+            console.log('Error fetching registrations:', err);
             return [];
         }
     }
@@ -77,7 +96,7 @@ export default class SQLiteDbHandler extends DbHandler {
             const results = await this.db.getAllAsync('SELECT * FROM registrations WHERE attended = 1');
             return results;
         } catch (err) {
-            console.error('Error fetching attendees:', err);
+            console.log('Error fetching attendees:', err);
             return [];
         }
     }
@@ -85,9 +104,10 @@ export default class SQLiteDbHandler extends DbHandler {
     async resetTable(){
         try {
             await this.db.runAsync('DELETE FROM registrations;');
-            console.log('Table reset successfully.');
+            return { success: true };
         } catch (err) {
-            console.error('Error resetting table:', err);
+            console.log('Error resetting table:', err);
+            return { success: false, error: err.message };
         }
     }
 }

@@ -7,10 +7,10 @@ export default function ScannedItem({data}){
                 <Text>{data.index+1}.</Text>
             </View>
             <View style={{flex: 3}}>
-                <Text>{data.item[0]}</Text>
+                <Text>{data.item.name}</Text>
             </View>
             <View style={{flex: 3}}>
-                <Text>{data.item[1]}</Text>
+                <Text>{data.item.id}</Text>
             </View>
         </View>
     )

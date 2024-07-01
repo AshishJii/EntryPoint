@@ -1,9 +1,9 @@
-import { Button, StyleSheet, Text, View, Modal, ScrollView } from 'react-native';
-import { Link } from 'expo-router';
+import { Button, StyleSheet, Text, View, Modal, ScrollView, ToastAndroid } from 'react-native';
 import { useState } from 'react';
+import { Link } from 'expo-router';
+import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import SQLiteDbHandler from '../data/SQLiteDbHandler';
-import * as FileSystem from 'expo-file-system';
 
 const dbHandler = new SQLiteDbHandler();
 
@@ -33,16 +33,16 @@ export default function Page() {
             />
             <Button 
             title='Get registrations' 
-            onPress={async () => {const data = await dbHandler.getRegistrations(); showDataInModal("Registrations", data);}}
+            onPress={async () => {const data = await dbHandler.getRegistrations(); showDataInModal("Registrations: "+data.length, data);}}
             style={styles.link}
             />
             <Button 
             title='Get attendees' 
-            onPress={async () => {const data = await dbHandler.getAttendees(); showDataInModal("Attendees", data);}}
+            onPress={async () => {const data = await dbHandler.getAttendees(); showDataInModal("Attendees: "+data.length, data);}}
             />
             <Button 
             title='Clear Table⚠️' 
-            onPress={async () => dbHandler.resetTable()}
+            onPress={async () => {const res = await dbHandler.resetTable(); if(res.success) ToastAndroid.show('Database cleared', ToastAndroid.SHORT);}}
             />
 
 
