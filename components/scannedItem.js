@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native';
+import styles from '../styles/scannedItemStyles';
 
 export default function ScannedItem({data}){
     return (
@@ -16,17 +17,3 @@ export default function ScannedItem({data}){
     )
 }
 
-const styles = StyleSheet.create({
-    listItem: {
-        flexDirection: 'row',
-        backgroundColor: '#e3e3e3',
-        margin: 3,
-        padding: 7,
-        borderColor: '#c3c3c3',
-        borderWidth: 1,
-        borderStyle: 'solid',
-        borderRadius: 4,
-        borderLeftWidth: 3,
-        borderRightWidth: 3
-    }
-});

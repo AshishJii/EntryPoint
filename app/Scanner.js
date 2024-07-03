@@ -8,7 +8,7 @@ import { AntDesign } from '@expo/vector-icons';
 import * as Sharing from 'expo-sharing';
 import JWT from "expo-jwt";
 import ScannedItem from './../components/scannedItem';
-import styles from './../styles/styles';
+import styles from '../styles/scannerStyles';
 import SQLiteDbHandler from '../data/SQLiteDbHandler';
 
 const dbHandler = new SQLiteDbHandler();
