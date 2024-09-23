@@ -1,6 +1,5 @@
 import { Text, SafeAreaView, FlatList } from 'react-native';
 import SQLiteDbHandler from '../data/SQLiteDbHandler';
-import { PaperProvider } from 'react-native-paper';
 import MyCard from '../components/myCard';
 import events from '../data/Events';
 
@@ -8,20 +7,13 @@ const dbHandler = new SQLiteDbHandler();
 
 export default function Page() {
     return (
-        <PaperProvider>
-            <SafeAreaView style={styles.margin}>
-                <Text style={styles.title}>Events:</Text>
-
-                <FlatList
-                    data={events}
-                    keyExtractor={(item, index) => index.toString()} 
-                    renderItem={({ item }) => (
-                        <MyCard event={item} style={styles.margin} />
-                    )}
-                    contentContainerStyle={{padding:10}}
-                />
-            </SafeAreaView>
-        </PaperProvider>
+        <FlatList
+            data={events}
+            keyExtractor={(item, index) => index} 
+            renderItem={({ item }) => (
+                <MyCard event={item} />
+            )}
+        />
     );
 }
 

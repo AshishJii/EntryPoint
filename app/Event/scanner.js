@@ -4,18 +4,19 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import JWT from "expo-jwt";
-import ScannedItem from './../components/scannedItem';
-import styles from '../styles/scannerStyles';
-import SQLiteDbHandler from '../data/SQLiteDbHandler';
+import { AntDesign } from '@expo/vector-icons';
+import ScannedItem from '../../components/scannedItem';
+import styles from '../../styles/scannerStyles';
+import SQLiteDbHandler from '../../data/SQLiteDbHandler';
 
 const dbHandler = new SQLiteDbHandler();
 const AppContext = createContext();
 
-export default function Page() {
-  const { event } = useLocalSearchParams(); // Get the event parameter
-  const eventDetails = JSON.parse(event); // Parse the event details
+export default function Scanner() {
+  // const { event } = useLocalSearchParams(); // Get the event parameter
+  // const eventDetails = JSON.parse(event); // Parse the event details
   const [scannedList, setScannedList] = useState([]);
-  const [secretKey, setSecretKey] = useState(eventDetails.secretKey || 'TechnicalTeam'); // Set secret key from event details
+  const [secretKey, setSecretKey] = useState('TechnicalTeam'); // Set secret key from event details
   const [isInfoVisible, setInfoVisible] = useState(false);
   const [overlayColor, setOverlayColor] = useState(null);
 
@@ -84,14 +85,6 @@ export default function Page() {
         <InfoModal />
         <InfoButton />
         <ShareButton />
-        <Button
-            mode="outlined"
-            onPress={() => router.back()}
-            style={styles.backButton}
-            rippleColor="#ff000020"
-          >
-            Go Back
-          </Button>
       </View>
     </AppContext.Provider>
   );

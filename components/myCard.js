@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Avatar, Button, Card, TouchableRipple } from "react-native-paper";
+import { Avatar, Button, Card,IconButton, TouchableRipple } from "react-native-paper";
 // import styles from '../styles/indexStyles';
 import { useRouter } from "expo-router";
 
@@ -10,16 +10,18 @@ const MyCard = ({ event }) => {
 
   const handlePress = () => {
     router.push({
-      pathname: "/Event",
-      params: { event: JSON.stringify(event) }, // Pass the event details as a parameter
+      pathname: "/Event/[id]",
+      params: { id: event.id, name: event.name }
     });
   };
 
   return (
-    <Card style={{ margin: 5 }} rippleColor="#ff000020" onPress={handlePress}>
+    <Card style={{ margin: 5}} rippleColor="#ff000020" onPress={handlePress}>
       <Card.Title title={event.name} subtitle={event.date} left={LeftContent} />
       <Card.Actions>
-        <Button>Remove</Button>
+        <TouchableRipple onPress={handlePress}>
+          <IconButton icon="trash-can-outline" />
+        </TouchableRipple>
       </Card.Actions>
     </Card>
   );

@@ -2,6 +2,7 @@
 
 const events = [
     {
+        id: 1,
         name: "Startup Charcha",
         date: "01 September", 
         secretKey: "Startup Charcha",
@@ -19,8 +20,9 @@ const events = [
         ],
     },
     {
-        name: "Startup Charcha",
-        date: "01 September", 
+        id: 2,
+        name: "Hustlers",
+        date: "03 September", 
         secretKey: "Startup Charcha",
         participants: [
             {
@@ -36,8 +38,9 @@ const events = [
         ],
     },
     {
-        name: "Startup Charcha",
-        date: "01 September", 
+        id: 3,
+        name: "ICPA",
+        date: "21 September", 
         secretKey: "Startup Charcha",
         participants: [
             {
@@ -53,8 +56,9 @@ const events = [
         ],
     },
     {
-        name: "Startup Charcha",
-        date: "01 September", 
+        id: 4,
+        name: "Inn-ventor",
+        date: "31 September", 
         secretKey: "Startup Charcha",
         participants: [
             {
@@ -70,8 +74,9 @@ const events = [
         ],
     },
     {
-        name: "Startup Charcha",
-        date: "01 September", 
+        id: 5,
+        name: "Tech Summit",
+        date: "25 November", 
         secretKey: "Startup Charcha",
         participants: [
             {
@@ -87,8 +92,9 @@ const events = [
         ],
     },
     {
-        name: "Startup Charcha",
-        date: "01 September", 
+        id: 6,
+        name: "Entrepreneur Expedition",
+        date: "11 December", 
         secretKey: "Startup Charcha",
         participants: [
             {

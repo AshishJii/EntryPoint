@@ -1,11 +1,14 @@
 import * as React from "react";
 import { BottomNavigation, Text } from "react-native-paper";
+import Registrations from "./registrations";
+import Scanner from "./scanner";
+import Tickets from "./tickets";
 
-const RegistrationsRoute = () => <Text>Registrations</Text>;
+const RegistrationsRoute = () => <Registrations />;
 
-const TicketsRoute = () => <Text>Tickets</Text>;
+const TicketsRoute = () => <Tickets />
 
-const ScannerRoute = () => <Text>Scanner</Text>;
+const ScannerRoute = () => <Scanner />
 
 const CertificatesRoute = () => <Text>Certificates</Text>;
 
