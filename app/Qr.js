@@ -57,6 +57,14 @@ export default function Page() {
                 </View>
             ))}
             <Button title="Download QR Codes as Zip" onPress={generateZipAndShare} />
+            <Button
+            mode="outlined"
+            onPress={() => router.back()}
+            style={styles.backButton}
+            rippleColor="#ff000020"
+          >
+            Go Back
+          </Button>
         </ScrollView>
     );
 }

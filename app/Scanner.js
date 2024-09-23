@@ -84,6 +84,14 @@ export default function Page() {
         <InfoModal />
         <InfoButton />
         <ShareButton />
+        <Button
+            mode="outlined"
+            onPress={() => router.back()}
+            style={styles.backButton}
+            rippleColor="#ff000020"
+          >
+            Go Back
+          </Button>
       </View>
     </AppContext.Provider>
   );

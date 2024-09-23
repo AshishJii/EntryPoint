@@ -3,8 +3,8 @@ import { View, Text, Button, ScrollView, FlatList, Alert } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import RNFS from 'react-native-fs';
 import JSZip from 'jszip';
-import { shareAsync } from 'expo-sharing';
 import * as MailComposer from 'expo-mail-composer';
+// import styles from '../styles/indexStyles'
 
 export default function Email() {
     const { event } = useLocalSearchParams();
@@ -63,6 +63,14 @@ export default function Email() {
                 )}
             />
             <Button title="Send QR Codes via Email" onPress={generateZipAndEmail} />
+            <Button
+            mode="outlined"
+            onPress={() => router.back()}
+            style={styles.backButton}
+            rippleColor="#ff000020"
+          >
+            Go Back
+          </Button>
         </ScrollView>
     );
 }

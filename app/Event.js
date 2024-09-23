@@ -1,75 +1,94 @@
-import { Button, Text, View, ScrollView, FlatList } from 'react-native';
-import { Link, useLocalSearchParams, useRouter } from 'expo-router'; 
-import SQLiteDbHandler from '../data/SQLiteDbHandler';
-import styles from '../styles/indexStyles';
-import { PaperProvider } from 'react-native-paper';
+import { Text, View, FlatList } from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import SQLiteDbHandler from "../data/SQLiteDbHandler";
+// import styles from '../styles/indexStyles';
+import { PaperProvider, Button } from "react-native-paper"; // Import Button from react-native-paper
 
 const dbHandler = new SQLiteDbHandler();
 
 export default function Event() {
-    const { event } = useLocalSearchParams(); // Get the event parameter
-    const eventDetails = JSON.parse(event); // Parse the event details
-    const router = useRouter(); // Initialize the router
-  
-    return (
-      <PaperProvider>
-        <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.title}>{eventDetails.name}</Text>
-          <Text>{eventDetails.date}</Text>
+  const { event } = useLocalSearchParams(); // Get the event parameter
+  const eventDetails = JSON.parse(event); // Parse the event details
+  const router = useRouter(); // Initialize the router
 
-          <View style={styles.linkContainer}>
-            <Link 
-              href={{
-                pathname:'/Qr',
-                params: { event: JSON.stringify(eventDetails) }
-              }} 
-              style={styles.link}
-            >
-              Generate QR 📄
-            </Link>
+  return (
+    <PaperProvider>
+      <View contentContainerStyle={styles.container}>
+        <Text style={styles.title}>{eventDetails.name}</Text>
+        <Text>{eventDetails.date}</Text>
 
-            <Link 
-              href={{
-                pathname:'/Email',
-                params: { event: JSON.stringify(eventDetails) }
-              }} 
-              style={styles.link}
-            >
-              Send Mail 📨
-            </Link>
+        <View style={styles.linkContainer}>
+          {/* Replace Link with Paper's Button */}
+          <Button
+            mode="contained"
+            onPress={() =>
+              router.push({
+                pathname: "/Qr",
+                params: { event: JSON.stringify(eventDetails) },
+              })
+            }
+            style={styles.linkButton}
+            rippleColor="#ff000020"
+          >
+            Generate QR 📄
+          </Button>
 
-            <Link 
-              href={{
-                pathname: '/Scanner',
-                params: { event: JSON.stringify(eventDetails) } // Pass the event details
-              }} 
-              style={styles.link}
-            >
-              Scan Entry 📷
-            </Link>
-          </View>
+          <Button
+            mode="contained"
+            onPress={() =>
+              router.push({
+                pathname: "/Email",
+                params: { event: JSON.stringify(eventDetails) },
+              })
+            }
+            style={styles.linkButton}
+            rippleColor="#ff000020"
+          >
+            Send Mail 📨
+          </Button>
 
-          {/* Participants List */}
-          <Text style={styles.subtitle}>Participants:</Text>
-          <FlatList
-            data={eventDetails.participants} // Assuming participants is an array in eventDetails
-            keyExtractor={(item) => item.rollNumber} // Unique key for each participant
-            renderItem={({ item }) => (
-              <View style={styles.participantItem}>
-                <Text>{item.name} - {item.rollNumber}</Text>
-              </View>
-            )}
-          />
+          <Button
+            mode="contained"
+            onPress={() =>
+              router.push({
+                pathname: "/Scanner",
+                params: { event: JSON.stringify(eventDetails) },
+              })
+            }
+            style={styles.linkButton}
+            rippleColor="#ff000020"
+          >
+            Scan Entry 📷
+          </Button>
+        </View>
 
-          {/* Go Back Button */}
-          <Button title="Go Back" onPress={() => router.back()} />
-        </ScrollView>
-      </PaperProvider>
-    );
+        {/* Participants List */}
+        <Text style={styles.subtitle}>Participants:</Text>
+        <FlatList
+          data={eventDetails.participants} // Assuming participants is an array in eventDetails
+          keyExtractor={(item) => item.rollNumber} // Unique key for each participant
+          renderItem={({ item }) => (
+            <View style={styles.participantItem}>
+              <Text>
+                {item.name} - {item.rollNumber}
+              </Text>
+            </View>
+          )}
+        />
+
+        {/* Go Back Button */}
+        <Button
+          mode="outlined"
+          onPress={() => router.back()}
+          style={styles.backButton}
+          rippleColor="#ff000020"
+        >
+          Go Back
+        </Button>
+      </View>
+    </PaperProvider>
+  );
 }
-
-
-
 
 // function DebugMenu(){
 //     const [modalVisible, setModalVisible] = useState(false);
@@ -94,21 +113,21 @@ export default function Event() {
 //     return (
 //         <View style={{position: 'absolute', bottom: 0, padding: 20, margin: 40, backgroundColor: "#ddd"}}>
 //             <Text>Debugging options:</Text>
-//             <Button 
-//             title='Import CSV' 
-//             onPress={pickCSV} 
+//             <Button
+//             title='Import CSV'
+//             onPress={pickCSV}
 //             />
-//             <Button 
-//             title='Get registrations' 
+//             <Button
+//             title='Get registrations'
 //             onPress={async () => {const data = await dbHandler.getRegistrations(); showDataInModal("Registrations: "+data.length, data);}}
 //             style={styles.link}
 //             />
-//             <Button 
-//             title='Get attendees' 
+//             <Button
+//             title='Get attendees'
 //             onPress={async () => {const data = await dbHandler.getAttendees(); showDataInModal("Attendees: "+data.length, data);}}
 //             />
-//             <Button 
-//             title='Clear Table⚠️' 
+//             <Button
+//             title='Clear Table⚠️'
 //             onPress={async () => {const res = await dbHandler.resetTable(); if(res.success) ToastAndroid.show('Database cleared', ToastAndroid.SHORT);}}
 //             />
 

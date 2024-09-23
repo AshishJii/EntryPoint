@@ -1,11 +1,6 @@
-import { Button, StyleSheet, Text, SafeAreaView, Modal, ScrollView, ToastAndroid } from 'react-native';
-import { useState } from 'react';
-import { Link } from 'expo-router';
-import * as FileSystem from 'expo-file-system';
-import * as DocumentPicker from 'expo-document-picker';
+import { Text, SafeAreaView, FlatList } from 'react-native';
 import SQLiteDbHandler from '../data/SQLiteDbHandler';
-import styles from '../styles/indexStyles';
-import {PaperProvider} from 'react-native-paper';
+import { PaperProvider } from 'react-native-paper';
 import MyCard from '../components/myCard';
 import events from '../data/Events';
 
@@ -13,17 +8,23 @@ const dbHandler = new SQLiteDbHandler();
 
 export default function Page() {
     return (
-    <PaperProvider>    
-        <SafeAreaView style={styles.margin}>
-        
-        <Text style={styles.title}>Events:</Text>
-        {events.map((event,index) => (
-            <MyCard key={index} event={event} style={styles.margin}/>
-        ))}
-    </SafeAreaView>
-    </PaperProvider>
-    )
+        <PaperProvider>
+            <SafeAreaView style={styles.margin}>
+                <Text style={styles.title}>Events:</Text>
+
+                <FlatList
+                    data={events}
+                    keyExtractor={(item, index) => index.toString()} 
+                    renderItem={({ item }) => (
+                        <MyCard event={item} style={styles.margin} />
+                    )}
+                    contentContainerStyle={{padding:10}}
+                />
+            </SafeAreaView>
+        </PaperProvider>
+    );
 }
+
 
 // function DebugMenu(){
 //     const [modalVisible, setModalVisible] = useState(false);
