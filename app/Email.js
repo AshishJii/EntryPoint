@@ -1,75 +1,68 @@
-// import React, { useState, useEffect } from "react";
-// import { View, Text, Button, FlatList, StyleSheet } from "react-native";
-// import SQLiteDbHandler from "../data/SQLiteDbHandler";
-// import * as MailComposer from "expo-mail-composer";
-// import styles from "../styles/emailStyles";
-export default Email = ()=>{
-  return <></>;
+import React from 'react';
+import { View, Text, Button, ScrollView, FlatList, Alert } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import RNFS from 'react-native-fs';
+import JSZip from 'jszip';
+import { shareAsync } from 'expo-sharing';
+import * as MailComposer from 'expo-mail-composer';
+
+export default function Email() {
+    const { event } = useLocalSearchParams();
+    const eventDetails = JSON.parse(event);
+    const secretKey = eventDetails.secretKey;
+    const participants = eventDetails.participants;
+
+    const generateZipAndEmail = async () => {
+        const zip = new JSZip();
+        const folder = zip.folder("qrcodes");
+
+        await Promise.all(participants.map(async (participant) => {
+            const svgData = `{"name": "${participant.name}", "rollNumber": "${participant.rollNumber}", "secretKey": "${secretKey}"}`;
+            const uri = `${RNFS.DocumentDirectoryPath}/${participant.name}.svg`;
+
+            // Generate QR code and save as SVG
+            await new Promise((resolve) => {
+                QRCode.toFile(uri, svgData, { type: 'svg' }, (err) => {
+                    if (err) console.error(err);
+                    resolve();
+                });
+            });
+
+            // Read the file and add to zip
+            const content = await RNFS.readFile(uri, 'base64');
+            folder.file(`${participant.name}.svg`, content, { base64: true });
+        }));
+
+        const zipFile = await zip.generateAsync({ type: 'base64' });
+        const zipFilePath = `${RNFS.DocumentDirectoryPath}/qrcodes.zip`;
+        await RNFS.writeFile(zipFilePath, zipFile, 'base64');
+
+        // Email the zip file to each participant
+        await Promise.all(participants.map(async (participant) => {
+            await MailComposer.composeAsync({
+                recipients: [participant.email],
+                subject: 'Your QR Code',
+                body: `Here is your QR code, ${participant.name}.`,
+                attachments: [zipFilePath],
+            });
+        }));
+
+        Alert.alert('Success', 'Emails sent successfully!');
+    };
+
+    return (
+        <ScrollView contentContainerStyle={{ padding: 20 }}>
+            <Text style={{ fontSize: 24, marginBottom: 20 }}>Send QR Codes to Participants</Text>
+            <FlatList
+                data={participants}
+                keyExtractor={(item) => item.rollNumber}
+                renderItem={({ item }) => (
+                    <View style={{ marginBottom: 20 }}>
+                        <Text>{item.name} - {item.rollNumber}</Text>
+                    </View>
+                )}
+            />
+            <Button title="Send QR Codes via Email" onPress={generateZipAndEmail} />
+        </ScrollView>
+    );
 }
-// export default Email = () => {
-//   const [status, setStatus] = useState("");
-//   const [emails, setEmails] = useState([]);
-//   const [sentEmails, setSentEmails] = useState([]);
-
-//   useEffect(() => {
-//     const fetchAttendees = async () => {
-//       const dbHandler = new SQLiteDbHandler();
-//       try {
-//         const attendees = await dbHandler.getAttendees();
-//         const emailAddresses = attendees.map((attendee) => attendee.email);
-//         setEmails(emailAddresses);
-//       } catch (error) {
-//         console.error("Error fetching attendees:", error);
-//         setStatus("An error occurred while fetching attendees");
-//       }
-//     };
-//     fetchAttendees();
-//   }, []);
-
-//   const sendEmails = async () => {
-//     if (emails.length === 0) {
-//       setStatus("No attendees found");
-//       return;
-//     }
-//     const options = {
-//       recipients: emails,
-//       subject: "Event Update",
-//       body: "Hello, this is a message for event attendees.",
-//     };
-//     try {
-//       const result = await MailComposer.composeAsync(options);
-//       if (result.status === MailComposer.MailComposerStatus.SENT) {
-//         setStatus("Emails sent successfully");
-//         setSentEmails(emails);
-//       } else {
-//         setStatus("Failed to send emails");
-//       }
-//     } catch (error) {
-//       console.error("Error sending emails:", error);
-//       setStatus("An error occurred while sending emails");
-//     }
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Text>{status}</Text>
-//       <Button title="Send Emails" onPress={sendEmails} />
-//       <FlatList
-//         data={emails}
-//         keyExtractor={(item, index) => index.toString()}
-//         renderItem={({ item }) => <Text>{item}</Text>}
-//         style={styles.emailList}
-//       />
-//       {sentEmails.length > 0 && (
-//         <View>
-//           <Text>Sent Emails:</Text>
-//           <FlatList
-//             data={sentEmails}
-//             keyExtractor={(item, index) => index.toString()}
-//             renderItem={({ item }) => <Text>{item}</Text>}
-//           />
-//         </View>
-//       )}
-//     </View>
-//   );
-// };

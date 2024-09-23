@@ -1,11 +1,10 @@
-import { Button, Text, View, ScrollView } from 'react-native';
-import { Link, useLocalSearchParams, useRouter } from 'expo-router'; // Import useRouter for navigation
+import { Button, Text, View, ScrollView, FlatList } from 'react-native';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router'; 
 import SQLiteDbHandler from '../data/SQLiteDbHandler';
 import styles from '../styles/indexStyles';
 import { PaperProvider } from 'react-native-paper';
 
 const dbHandler = new SQLiteDbHandler();
-
 
 export default function Event() {
     const { event } = useLocalSearchParams(); // Get the event parameter
@@ -17,10 +16,28 @@ export default function Event() {
         <ScrollView contentContainerStyle={styles.container}>
           <Text style={styles.title}>{eventDetails.name}</Text>
           <Text>{eventDetails.date}</Text>
-  
+
           <View style={styles.linkContainer}>
-            <Link href='/Qr' style={styles.link}>Generate QR 📄</Link>
-            <Link href='/Email' style={styles.link}>Send Mail 📨</Link>
+            <Link 
+              href={{
+                pathname:'/Qr',
+                params: { event: JSON.stringify(eventDetails) }
+              }} 
+              style={styles.link}
+            >
+              Generate QR 📄
+            </Link>
+
+            <Link 
+              href={{
+                pathname:'/Email',
+                params: { event: JSON.stringify(eventDetails) }
+              }} 
+              style={styles.link}
+            >
+              Send Mail 📨
+            </Link>
+
             <Link 
               href={{
                 pathname: '/Scanner',
@@ -31,13 +48,26 @@ export default function Event() {
               Scan Entry 📷
             </Link>
           </View>
-  
+
+          {/* Participants List */}
+          <Text style={styles.subtitle}>Participants:</Text>
+          <FlatList
+            data={eventDetails.participants} // Assuming participants is an array in eventDetails
+            keyExtractor={(item) => item.rollNumber} // Unique key for each participant
+            renderItem={({ item }) => (
+              <View style={styles.participantItem}>
+                <Text>{item.name} - {item.rollNumber}</Text>
+              </View>
+            )}
+          />
+
           {/* Go Back Button */}
           <Button title="Go Back" onPress={() => router.back()} />
         </ScrollView>
       </PaperProvider>
     );
-  }
+}
+
 
 
 
