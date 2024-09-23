@@ -1,5 +1,16 @@
 import { StyleSheet } from "react-native";
 export default styles = StyleSheet.create({
+    margin:{
+        margin:20,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 16,
+      },
+      linkContainer: {
+        marginTop: 16,
+      },
     container: {
         flex: 1,
         justifyContent: 'center',

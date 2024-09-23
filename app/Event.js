@@ -1,29 +1,45 @@
-import { Button, StyleSheet, Text, SafeAreaView, Modal, ScrollView, ToastAndroid } from 'react-native';
-import { useState } from 'react';
-import { Link } from 'expo-router';
-import * as FileSystem from 'expo-file-system';
-import * as DocumentPicker from 'expo-document-picker';
+import { Button, Text, View, ScrollView } from 'react-native';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router'; // Import useRouter for navigation
 import SQLiteDbHandler from '../data/SQLiteDbHandler';
 import styles from '../styles/indexStyles';
-import {PaperProvider} from 'react-native-paper';
-import MyCard from '../components/myCard';
-import events from '../data/Events';
+import { PaperProvider } from 'react-native-paper';
 
 const dbHandler = new SQLiteDbHandler();
 
-export default function Page() {
+
+export default function Event() {
+    const { event } = useLocalSearchParams(); // Get the event parameter
+    const eventDetails = JSON.parse(event); // Parse the event details
+    const router = useRouter(); // Initialize the router
+  
     return (
-    <PaperProvider>    
-        <SafeAreaView style={styles.margin}>
-        
-        <Text style={styles.title}>Events:</Text>
-        {events.map((event,index) => (
-            <MyCard key={index} event={event} style={styles.margin}/>
-        ))}
-    </SafeAreaView>
-    </PaperProvider>
-    )
-}
+      <PaperProvider>
+        <ScrollView contentContainerStyle={styles.container}>
+          <Text style={styles.title}>{eventDetails.name}</Text>
+          <Text>{eventDetails.date}</Text>
+  
+          <View style={styles.linkContainer}>
+            <Link href='/Qr' style={styles.link}>Generate QR 📄</Link>
+            <Link href='/Email' style={styles.link}>Send Mail 📨</Link>
+            <Link 
+              href={{
+                pathname: '/Scanner',
+                params: { event: JSON.stringify(eventDetails) } // Pass the event details
+              }} 
+              style={styles.link}
+            >
+              Scan Entry 📷
+            </Link>
+          </View>
+  
+          {/* Go Back Button */}
+          <Button title="Go Back" onPress={() => router.back()} />
+        </ScrollView>
+      </PaperProvider>
+    );
+  }
+
+
 
 // function DebugMenu(){
 //     const [modalVisible, setModalVisible] = useState(false);

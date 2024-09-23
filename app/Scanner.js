@@ -1,10 +1,7 @@
-
 import { useState, useRef, createContext, useContext, useEffect } from 'react';
-import { Button, TextInput, TouchableOpacity, Text, View, ToastAndroid, Linking, Modal, FlatList} from 'react-native';
+import { Button, TextInput, TouchableOpacity, Text, View, ToastAndroid, Modal, FlatList } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import * as FileSystem from 'expo-file-system';
-import { StatusBar } from 'expo-status-bar';
-import { AntDesign } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
 import * as Sharing from 'expo-sharing';
 import JWT from "expo-jwt";
 import ScannedItem from './../components/scannedItem';
@@ -15,8 +12,10 @@ const dbHandler = new SQLiteDbHandler();
 const AppContext = createContext();
 
 export default function Page() {
+  const { event } = useLocalSearchParams(); // Get the event parameter
+  const eventDetails = JSON.parse(event); // Parse the event details
   const [scannedList, setScannedList] = useState([]);
-  const [secretKey, setSecretKey] = useState('TechnicalTeam')
+  const [secretKey, setSecretKey] = useState(eventDetails.secretKey || 'TechnicalTeam'); // Set secret key from event details
   const [isInfoVisible, setInfoVisible] = useState(false);
   const [overlayColor, setOverlayColor] = useState(null);
 
@@ -30,42 +29,36 @@ export default function Page() {
       setScannedList(d);
     }
     fetchData();
-  },[])
+  }, []);
 
   // Handle QR scanning and processing
   const handleQRScan = async (qr) => {
-    // Delay QR Scan
     const now = Date.now();
-    if(now - lastScannedTime.current < SCAN_DELAY) return;
+    if (now - lastScannedTime.current < SCAN_DELAY) return;
 
-    //Get QR data
     lastScannedTime.current = now;
     let token = qr.data;
-    console.log('QR data: '+token)
+    console.log('QR data: ' + token);
 
-    // is Valid JWT token
+    // Check if the token is a valid JWT
     let data;
-    try{
+    try {
       data = await JWT.decode(token, secretKey);
     } catch (e) {
-      if(e.message == 'Invalid token signature'){
-        ToastAndroid.show('Invalid QR', ToastAndroid.SHORT)
-        setOverlayColor("red")
+      if (e.message === 'Invalid token signature') {
+        ToastAndroid.show('Invalid QR', ToastAndroid.SHORT);
+        setOverlayColor("red");
         setTimeout(() => setOverlayColor(null), 500);
         return;
       }
     }
 
-    data = data.data; // FIXME: remove this later; it is due to bad QRs
-    console.log(data)
-    // TODO: Insert scanned timestamp in db
-    // console.log(lastScannedTime.current);
-    // const dt = new Date(lastScannedTime.current).toLocaleString().replace(', ',' ');
-    // console.log(dt);
-    
+    data = data.data; // Handle JWT data
+    console.log(data);
+
     // Update database
     const res = await dbHandler.updateAttendance(data);
-    if(!res.success){
+    if (!res.success) {
       ToastAndroid.show(res.error, ToastAndroid.SHORT);
       setOverlayColor("red");
       setTimeout(() => setOverlayColor(null), 500);
@@ -74,20 +67,19 @@ export default function Page() {
     
     setScannedList((list) => [...list, res.data]);
     setOverlayColor("green");
-    setTimeout(() => setOverlayColor(null), 500); // Reset after 500ms
-    setTimeout(()=>{  // this feels wrong, but is important to make sure re-render happens before scroll
+    setTimeout(() => setOverlayColor(null), 500);
+    setTimeout(() => {
       flatListRef.current?.scrollToEnd({ animated: true });
-    },100);
-    // ToastAndroid.show(data+' inserted', ToastAndroid.SHORT)
+    }, 100);
   }
-  
+
   return (
-    <AppContext.Provider value={{isInfoVisible, setInfoVisible, secretKey, setSecretKey}}>
+    <AppContext.Provider value={{ isInfoVisible, setInfoVisible, secretKey, setSecretKey }}>
       <View style={styles.container}>
         {overlayColor === "green" && <View style={styles.overlayGreen} />}
         {overlayColor === "red" && <View style={styles.overlayRed} />}
-        <CamPermissionAlert />        
-        <Camera handleQRScan={handleQRScan} />        
+        <CamPermissionAlert />
+        <Camera handleQRScan={handleQRScan} />
         <ScannedList scannedList={scannedList} flatListRef={flatListRef} />
         <InfoModal />
         <InfoButton />
@@ -97,52 +89,54 @@ export default function Page() {
   );
 }
 
-function CamPermissionAlert(){
+function CamPermissionAlert() {
   const [permission, requestPermission] = useCameraPermissions();
-  
+
   useEffect(() => {
-    if(permission == null) return;
-    if(!permission.granted) {
+    if (permission == null) return;
+    if (!permission.granted) {
       requestPermission();
     } else {
       console.log("Camera permission granted");
     }
-  },[permission]);
+  }, [permission]);
 }
 
-function Camera({handleQRScan}){
+function Camera({ handleQRScan }) {
   return (
     <CameraView 
-    style={styles.camera}
-    barcodeScannerSettings={{
-      barcodeTypes: ["qr"],
-    }}
-    onBarcodeScanned={handleQRScan}>
-      <View style={styles.camOverlay}/>
+      style={styles.camera}
+      barcodeScannerSettings={{
+        barcodeTypes: ["qr"],
+      }}
+      onBarcodeScanned={handleQRScan}
+    >
+      <View style={styles.camOverlay} />
     </CameraView>
-  )
+  );
 }
 
-function ScannedList({scannedList, flatListRef}){
+function ScannedList({ scannedList, flatListRef }) {
   return (
-    <FlatList style={{flex: 1}}
-        ref={flatListRef}
-          data={scannedList}
-          renderItem={(data) => <ScannedItem data={data}/>}
-          keyExtractor={(data,idx) => idx}
-          inverted
-        />
-  )
+    <FlatList
+      style={{ flex: 1 }}
+      ref={flatListRef}
+      data={scannedList}
+      renderItem={(data) => <ScannedItem data={data} />}
+      keyExtractor={(data, idx) => idx.toString()}
+      inverted
+    />
+  );
 }
 
-function InfoModal(){
-  const {isInfoVisible, setInfoVisible, secretKey, setSecretKey} = useContext(AppContext);
+function InfoModal() {
+  const { isInfoVisible, setInfoVisible, secretKey, setSecretKey } = useContext(AppContext);
 
   return (
     <Modal 
       visible={isInfoVisible}
-      onRequestClose={()=> setInfoVisible(false)}
-      >
+      onRequestClose={() => setInfoVisible(false)}
+    >
       <Text style={styles.text}>
         SECRET KEY
       </Text>
@@ -153,28 +147,27 @@ function InfoModal(){
         placeholder="Enter Token here"
       />
     </Modal>
-  )
+  );
 }
 
-function InfoButton(){
+function InfoButton() {
   const { setInfoVisible } = useContext(AppContext);
   return (
-    <TouchableOpacity style={styles.infoButton} onPress={()=> setInfoVisible(true)}>
+    <TouchableOpacity style={styles.infoButton} onPress={() => setInfoVisible(true)}>
       <AntDesign name="infocirlceo" size={24} color="white" />
     </TouchableOpacity>
-  )
+  );
 }
 
-// TODO: Fix the share button or remove it
-function ShareButton(){
+function ShareButton() {
   const fileSharer = async () => {
     const res = await dbHandler.exportCSV();
     await Sharing.shareAsync(res.fileUri);
-  }
+  };
 
   return (
     <TouchableOpacity style={styles.shareButton} onPress={fileSharer}>
       <AntDesign name="export" size={24} color="white" />
     </TouchableOpacity>
-  )
+  );
 }
