@@ -3,16 +3,24 @@ import { BottomNavigation, Text } from "react-native-paper";
 import Registrations from "./registrations";
 import Scanner from "./scanner";
 import Tickets from "./tickets";
+import Certificates from "./Certificates";
+import { useLocalSearchParams } from "expo-router";
 
-const RegistrationsRoute = () => <Registrations />;
 
-const TicketsRoute = () => <Tickets />
 
-const ScannerRoute = () => <Scanner />
-
-const CertificatesRoute = () => <Text>Certificates</Text>;
 
 const Event = () => {
+  
+  const { id, name } = useLocalSearchParams(); 
+  
+  const RegistrationsRoute = () => <Registrations eventId={id}/>;
+
+  const TicketsRoute = () => <Tickets eventId={id}/>
+
+  const ScannerRoute = () => <Scanner eventId={id}/>
+
+  const CertificatesRoute = () => <Certificates eventId={id}/>
+
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     {
@@ -39,11 +47,13 @@ const Event = () => {
   });
 
   return (
-    <BottomNavigation
-      navigationState={{ index, routes }}
-      onIndexChange={setIndex}
-      renderScene={renderScene}
-    />
+    <>
+      <BottomNavigation
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
+      />
+    </>
   );
 };
 

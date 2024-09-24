@@ -12,7 +12,7 @@ import SQLiteDbHandler from '../../data/SQLiteDbHandler';
 const dbHandler = new SQLiteDbHandler();
 const AppContext = createContext();
 
-export default function Scanner() {
+export default function Scanner( {eventId} ) {
   // const { event } = useLocalSearchParams(); // Get the event parameter
   // const eventDetails = JSON.parse(event); // Parse the event details
   const [scannedList, setScannedList] = useState([]);

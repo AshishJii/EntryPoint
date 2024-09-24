@@ -1,31 +1,33 @@
 import React from 'react';
 import { View } from 'react-native';
 import { List, Snackbar, Divider } from 'react-native-paper';
-import SQLiteDbHandler from '../../data/SQLiteDbHandler';
+import SQLiteDbHandler from '../../data/SQLiteDbHandler'; // Assuming you have SQLiteDbHandler for managing data
 
 const dbHandler = new SQLiteDbHandler();
 
-const Registrations = ( {eventId} ) => {
+const Certificates = ({ eventId }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
 
-  const handleImportCSV = async () => {
-    console.log('Import CSV functionality to be implemented');
-  };
-
-  const handleViewRegistrations = async () => {
-    const registrations = await dbHandler.getAttendees();
-    console.log('Registrations:', registrations);
-    setSnackbarMessage('View Registrations functionality to be implemented.');
+  const handleGenerateCertificates = async () => {
+    console.log('Generate Certificates functionality to be implemented');
+    setSnackbarMessage('Certificates generation in progress...');
     setSnackbarVisible(true);
   };
 
-  const handleClearRegistrations = async () => {
-    const res = await dbHandler.clearRegistrations();
+  const handleViewCertificates = async () => {
+    const certificates = await dbHandler.getCertificates();
+    console.log('Certificates:', certificates);
+    setSnackbarMessage('View Certificates functionality to be implemented.');
+    setSnackbarVisible(true);
+  };
+
+  const handleClearCertificates = async () => {
+    const res = await dbHandler.clearCertificates();
     if (res.success) {
-      setSnackbarMessage('Registrations cleared successfully!');
+      setSnackbarMessage('Certificates cleared successfully!');
     } else {
-      setSnackbarMessage('Failed to clear registrations.');
+      setSnackbarMessage('Failed to clear certificates.');
     }
     setSnackbarVisible(true);
   };
@@ -34,24 +36,24 @@ const Registrations = ( {eventId} ) => {
     <View style={{ paddingHorizontal: 15 }}>
       <List.Section>
         <List.Item
-          title="Import CSV"
-          onPress={handleImportCSV}
+          title="Generate Certificates"
+          onPress={handleGenerateCertificates}
           style={{ paddingVertical: 20, borderRadius: 5 }}
           titleStyle={{ fontWeight: 'bold' }}
-          left={() => <List.Icon icon="file-upload" />}
+          left={() => <List.Icon icon="certificate" />}
         />
         <Divider />
         <List.Item
-          title="View Registrations"
-          onPress={handleViewRegistrations}
+          title="View Certificates"
+          onPress={handleViewCertificates}
           style={{ paddingVertical: 20, borderRadius: 5 }}
           titleStyle={{ fontWeight: 'bold' }}
           left={() => <List.Icon icon="eye" />}
         />
         <Divider />
         <List.Item
-          title="Clear Registrations"
-          onPress={handleClearRegistrations}
+          title="Clear Certificates"
+          onPress={handleClearCertificates}
           style={{ paddingVertical: 20, borderRadius: 5 }}
           titleStyle={{ fontWeight: 'bold' }}
           left={() => <List.Icon icon="delete" />}
@@ -69,4 +71,4 @@ const Registrations = ( {eventId} ) => {
   );
 };
 
-export default Registrations;
+export default Certificates;

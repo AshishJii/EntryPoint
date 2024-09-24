@@ -5,7 +5,7 @@ import SQLiteDbHandler from '../../data/SQLiteDbHandler';
 
 const dbHandler = new SQLiteDbHandler();
 
-const Tickets = () => {
+const Tickets = ( {eventId} ) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
 
