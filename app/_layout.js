@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Stack } from 'expo-router';
 import { MD3LightTheme as DefaultTheme, Appbar, PaperProvider, Modal, Portal, Text, Button } from 'react-native-paper';
 import { SafeAreaView, View, StyleSheet } from 'react-native';
+import { SQLiteProvider } from 'expo-sqlite';
+import * as sqliteDb from './../data/SQLiteDbHandler';
 
 const theme = {
   ...DefaultTheme,
@@ -20,6 +22,7 @@ export default function Layout() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
+      <SQLiteProvider databaseName="events.db" onInit={sqliteDb.migrateDbIfNeeded}>
       <PaperProvider theme={theme}>
         <Stack>
           <Stack.Screen
@@ -41,8 +44,7 @@ export default function Layout() {
           <Modal
             visible={visible}
             onDismiss={hideModal}
-            contentContainerStyle={styles.modalContainer}
-          >
+            contentContainerStyle={styles.modalContainer}>
             <Text style={styles.modalTitle}>About this App</Text>
             <View style={styles.contentContainer}>
               <Text>This app is designed for managing events effectively.</Text>
@@ -59,6 +61,7 @@ export default function Layout() {
           </Modal>
         </Portal>
       </PaperProvider>
+      </SQLiteProvider>
     </SafeAreaView>
   );
 }

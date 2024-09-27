@@ -1,13 +1,14 @@
 import React from 'react';
 import { View } from 'react-native';
+import { useSQLiteContext } from 'expo-sqlite';
 import { List, Snackbar, Divider } from 'react-native-paper';
-import SQLiteDbHandler from '../../data/SQLiteDbHandler'; // Assuming you have SQLiteDbHandler for managing data
-
-const dbHandler = new SQLiteDbHandler();
+import { getCertificates, clearCertificates } from '../../data/SQLiteDbHandler'; // Assuming you have SQLiteDbHandler for managing data
 
 const Certificates = ({ eventId }) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
+
+  const db = useSQLiteContext();
 
   const handleGenerateCertificates = async () => {
     console.log('Generate Certificates functionality to be implemented');
@@ -16,14 +17,14 @@ const Certificates = ({ eventId }) => {
   };
 
   const handleViewCertificates = async () => {
-    const certificates = await dbHandler.getCertificates();
+    const certificates = await getCertificates(db);
     console.log('Certificates:', certificates);
     setSnackbarMessage('View Certificates functionality to be implemented.');
     setSnackbarVisible(true);
   };
 
   const handleClearCertificates = async () => {
-    const res = await dbHandler.clearCertificates();
+    const res = await clearCertificates(db);
     if (res.success) {
       setSnackbarMessage('Certificates cleared successfully!');
     } else {

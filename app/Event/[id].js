@@ -1,13 +1,11 @@
-import * as React from "react";
-import { BottomNavigation, Text } from "react-native-paper";
+import React, { useState } from 'react';
+import { BottomNavigation } from "react-native-paper";
 import Registrations from "./registrations";
 import Scanner from "./scanner";
 import Tickets from "./tickets";
 import Certificates from "./Certificates";
 import { useLocalSearchParams } from "expo-router";
-
-
-
+import { RegistrationContext } from "./../../contexts/RegistrationContext";
 
 const Event = () => {
   
@@ -39,6 +37,8 @@ const Event = () => {
     },
   ]);
 
+  const [registrations, setRegistrations] = useState([]);
+
   const renderScene = BottomNavigation.SceneMap({
     Registrations: RegistrationsRoute,
     Tickets: TicketsRoute,
@@ -47,13 +47,13 @@ const Event = () => {
   });
 
   return (
-    <>
-      <BottomNavigation
+    <RegistrationContext.Provider value={{ registrations, setRegistrations }}>
+    <BottomNavigation
         navigationState={{ index, routes }}
         onIndexChange={setIndex}
         renderScene={renderScene}
       />
-    </>
+  </RegistrationContext.Provider>
   );
 };
 

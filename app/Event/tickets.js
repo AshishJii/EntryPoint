@@ -1,13 +1,15 @@
 import React from 'react';
 import { View } from 'react-native';
 import { List, Snackbar, Divider } from 'react-native-paper';
-import SQLiteDbHandler from '../../data/SQLiteDbHandler';
+import { useSQLiteContext } from 'expo-sqlite';
+import { getTickets } from './../../data/SQLiteDbHandler';
 
-const dbHandler = new SQLiteDbHandler();
 
 const Tickets = ( {eventId} ) => {
   const [snackbarVisible, setSnackbarVisible] = React.useState(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState('');
+
+  const db = useSQLiteContext();
 
   const handleCreateTickets = async () => {
     console.log('Create Tickets functionality to be implemented');
@@ -16,7 +18,7 @@ const Tickets = ( {eventId} ) => {
   };
 
   const handleViewTickets = async () => {
-    const tickets = await dbHandler.getTickets(); // Assuming you have a method to get tickets
+    const tickets = await getTickets(db); // Assuming you have a method to get tickets
     console.log('Tickets:', tickets);
     setSnackbarMessage('View Tickets functionality to be implemented.');
     setSnackbarVisible(true);

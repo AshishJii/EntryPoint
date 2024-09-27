@@ -7,12 +7,14 @@ import JWT from "expo-jwt";
 import { AntDesign } from '@expo/vector-icons';
 import ScannedItem from '../../components/scannedItem';
 import styles from '../../styles/scannerStyles';
-import SQLiteDbHandler from '../../data/SQLiteDbHandler';
+import { getAttendees, updateAttendance, exportCSV } from '../../data/SQLiteDbHandler';
+import { useSQLiteContext } from 'expo-sqlite';
 
-const dbHandler = new SQLiteDbHandler();
+let db;
 const AppContext = createContext();
 
 export default function Scanner( {eventId} ) {
+  db = useSQLiteContext();
   // const { event } = useLocalSearchParams(); // Get the event parameter
   // const eventDetails = JSON.parse(event); // Parse the event details
   const [scannedList, setScannedList] = useState([]);
@@ -26,7 +28,7 @@ export default function Scanner( {eventId} ) {
 
   useEffect(() => {
     async function fetchData() {
-      const d = await dbHandler.getAttendees();
+      const d = await getAttendees(db);
       setScannedList(d);
     }
     fetchData();
@@ -58,7 +60,7 @@ export default function Scanner( {eventId} ) {
     console.log(data);
 
     // Update database
-    const res = await dbHandler.updateAttendance(data);
+    const res = await updateAttendance(db, data);
     if (!res.success) {
       ToastAndroid.show(res.error, ToastAndroid.SHORT);
       setOverlayColor("red");
@@ -162,7 +164,7 @@ function InfoButton() {
 
 function ShareButton() {
   const fileSharer = async () => {
-    const res = await dbHandler.exportCSV();
+    const res = await exportCSV(db);
     await Sharing.shareAsync(res.fileUri);
   };
 
