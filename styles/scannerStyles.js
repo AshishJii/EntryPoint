@@ -66,5 +66,10 @@ export default styles = StyleSheet.create({
       margin: 12,
       borderWidth: 1,
       padding: 10,
-    }
+    },  fab: {
+      position: 'absolute',
+      margin: 16,
+      right: 0,
+      bottom: 0,
+    },
   });

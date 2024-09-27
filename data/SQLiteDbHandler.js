@@ -120,7 +120,7 @@ export const getRegistrations = async (db) => {
 // Get all attendees
 export const getAttendees = async (db) => {
   try {
-    const results = await db.getAllAsync('SELECT * FROM registrations WHERE attended = 1');
+    const results = await db.getAllAsync('SELECT name, id, email FROM registrations WHERE attended = 1');
     return results;
   } catch (err) {
     console.log('Error fetching attendees:', err);

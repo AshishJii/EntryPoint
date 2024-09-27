@@ -131,7 +131,7 @@ const RegistrationItem = ({ registration }) => {
   return (
     <List.Item
       title={name}
-      description={`${email}\nAttended: ${attended ? 'Yes' : 'No'} | QR Generated: ${qrGenerated ? 'Yes' : 'No'} | Email Sent: ${emailSent ? 'Yes' : 'No'}`}
+      description={`${id}\n${email}\nAttended: ${attended ? 'Yes' : 'No'} | QR Generated: ${qrGenerated ? 'Yes' : 'No'} | Email Sent: ${emailSent ? 'Yes' : 'No'}`}
       left={() => 
         (
           <Avatar.Icon 
