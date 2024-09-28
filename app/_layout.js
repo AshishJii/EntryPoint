@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Stack } from 'expo-router';
-import { Appbar, PaperProvider, Modal, Portal, Text, Button } from 'react-native-paper';
+import { Appbar, PaperProvider, Modal, Portal, Text, Button} from 'react-native-paper';
 import { SafeAreaView, View, StyleSheet } from 'react-native';
 import { SQLiteProvider } from 'expo-sqlite';
+import { SplashScreen } from "expo-router";
 import * as sqliteDb from './../data/SQLiteDbHandler';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function Layout() {
   const [visible, setVisible] = useState(false);
@@ -11,8 +14,15 @@ export default function Layout() {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
+  useEffect(() => { // hides half second white flash after splash screen
+    const hideSplash = async () => {
+      await SplashScreen.hideAsync();
+    }
+    hideSplash();
+  }, [])
+
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#141824" }}>
       <SQLiteProvider databaseName="events.db" onInit={sqliteDb.migrateDbIfNeeded}>
       <PaperProvider>
         <Stack>
@@ -60,7 +70,6 @@ export default function Layout() {
 const styles = StyleSheet.create({
   modalContainer: {
     padding: 20,
-    backgroundColor: '#fff',
     borderRadius: 8,
   },
   modalTitle: {
