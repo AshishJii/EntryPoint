@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
 import { Stack } from 'expo-router';
-import { MD3LightTheme as DefaultTheme, Appbar, PaperProvider, Modal, Portal, Text, Button } from 'react-native-paper';
+import { Appbar, PaperProvider, Modal, Portal, Text, Button } from 'react-native-paper';
 import { SafeAreaView, View, StyleSheet } from 'react-native';
 import { SQLiteProvider } from 'expo-sqlite';
 import * as sqliteDb from './../data/SQLiteDbHandler';
-
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'purple',
-    secondary: 'blue',
-  },
-};
 
 export default function Layout() {
   const [visible, setVisible] = useState(false);
@@ -23,7 +14,7 @@ export default function Layout() {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <SQLiteProvider databaseName="events.db" onInit={sqliteDb.migrateDbIfNeeded}>
-      <PaperProvider theme={theme}>
+      <PaperProvider>
         <Stack>
           <Stack.Screen
             name="index"

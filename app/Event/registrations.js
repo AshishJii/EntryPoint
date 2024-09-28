@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
-import { Snackbar, IconButton, Button, DataTable, List, Avatar, Text } from 'react-native-paper';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { Snackbar, IconButton, Button, DataTable, List, Avatar, Text, ActivityIndicator } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
 import { useSQLiteContext } from 'expo-sqlite';
@@ -151,7 +151,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 15,
     paddingVertical: 20,
-    backgroundColor: '#fff',
   },
   centeredContainer: {
     flex: 1,

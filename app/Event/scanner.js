@@ -1,10 +1,9 @@
-import { useState, useRef, createContext, useContext, useEffect } from 'react';
-import { TouchableOpacity, Text, View, ToastAndroid, Modal, FlatList } from 'react-native';
-import { Button, TextInput, Snackbar, Appbar, FAB, List, Avatar, DataTable, IconButton } from 'react-native-paper';
+import { useState, useRef, createContext, useEffect } from 'react';
+import { View, FlatList } from 'react-native';
+import { Text, Snackbar, FAB, List, Avatar } from 'react-native-paper';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Sharing from 'expo-sharing';
 import JWT from "expo-jwt";
-import { AntDesign } from '@expo/vector-icons';
 // import ScannedItem from '../../components/scannedItem';
 import styles from '../../styles/scannerStyles';
 import { getAttendees, updateAttendance, exportCSV } from '../../data/SQLiteDbHandler';

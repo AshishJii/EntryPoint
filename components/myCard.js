@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Avatar, Button, Card,IconButton, TouchableRipple } from "react-native-paper";
+import { Avatar, Card, IconButton, TouchableRipple } from "react-native-paper";
 // import styles from '../styles/indexStyles';
 import { useRouter } from "expo-router";
 
@@ -16,7 +16,7 @@ const MyCard = ({ event }) => {
   };
 
   return (
-    <Card style={{ margin: 5}} rippleColor="#ff000020" onPress={handlePress}>
+    <Card style={{ margin: 5 }} onPress={handlePress}>
       <Card.Title title={event.name} subtitle={event.date} left={LeftContent} />
       <Card.Actions>
         <TouchableRipple onPress={handlePress}>
