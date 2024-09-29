@@ -1,9 +1,9 @@
 {
   "expo": {
-    "name": "EntryPoint",
-    "slug": "EntryCheck",
-    "version": "1.0.0",
-    "scheme": "entry-point",
+    "name": "EventEasy",
+    "slug": "event-easy",
+    "version": "1.1.0",
+    "scheme": "event-easy",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -20,7 +20,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#141824"
       },
-      "package": "com.ashishexpodev.EntryCheck"
+      "package": "com.ashishexpodev.EventEasy"
     },
     "web": {
       "favicon": "./assets/favicon.png"

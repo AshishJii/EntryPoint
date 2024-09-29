@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet, Image } from 'react-native';
 import { Snackbar, IconButton, Button, DataTable, List, Avatar, Text, ActivityIndicator } from 'react-native-paper';
 import * as FileSystem from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
@@ -123,21 +123,66 @@ const Registrations = ({ eventId }) => {
 };
 
 const RegistrationItem = ({ registration }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [image, setImage] = useState(null);
   const { id, name, email, attended, qrGenerated, emailSent } = registration;
 
-  const imageUrl = `https://erp.psit.ac.in/assets/img/Simages/${id}.jpg`;
+  // TODO: Test multiple times at different times of day to see which one is faster
 
-  // console.log(imageUrl)
+  // Method 1: Normal fetch
+  // const imageUrl = `http://erp.psit.ac.in/assets/img/Simages/${id}.jpg`;
+  // const headers = {};
+
+  // Method 2: Skips DNS resolution, should be faster
+  const imageUrl = `http://103.120.30.61/assets/img/Simages/${id}.jpg`;
+  const headers = { 'Host': 'erp.psit.ac.in', 'Cookie': '' };
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try{
+        const fileUri = FileSystem.documentDirectory + `${id}.jpg`;
+        const { uri } = await FileSystem.downloadAsync(imageUrl, fileUri, { headers });
+        const base64 = await FileSystem.readAsStringAsync(uri, { encoding: FileSystem.EncodingType.Base64 });
+        setImage(`data:image/jpeg;base64,${base64}`);
+      } catch (error) {
+            console.log('Error fetching image:', error);
+            // image of star to indicate problems while fetch
+            setImage('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAwBQTFRF7c5J78kt+/Xm78lQ6stH5LI36bQh6rcf7sQp671G89ZZ8c9V8c5U9+u27MhJ/Pjv9txf8uCx57c937Ay5L1n58Nb67si8tVZ5sA68tJX/Pfr7dF58tBG9d5e8+Gc6chN6LM+7spN1pos6rYs6L8+47hE7cNG6bQc9uFj7sMn4rc17cMx3atG8duj+O7B686H7cAl7cEm7sRM26cq/vz5/v767NFY7tJM78Yq8s8y3agt9dte6sVD/vz15bY59Nlb8txY9+y86LpA5LxL67pE7L5H05Ai2Z4m58Vz89RI7dKr+/XY8Ms68dx/6sZE7sRCzIEN0YwZ67wi6rk27L4k9NZB4rAz7L0j5rM66bMb682a5sJG6LEm3asy3q0w3q026sqC8cxJ6bYd685U5a457cIn7MBJ8tZW7c1I7c5K7cQ18Msu/v3678tQ3aMq7tNe6chu6rgg79VN8tNH8c0w57Q83akq7dBb9Nld9d5g6cdC8dyb675F/v327NB6////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/LvB3QAAAMFJREFUeNpiqIcAbz0ogwFKm7GgCjgyZMihCLCkc0nkIAnIMVRw2UhDBGp5fcurGOyLfbhVtJwLdJkY8oscZCsFPBk5spiNaoTC4hnqk801Qi2zLQyD2NlcWWP5GepN5TOtSxg1QwrV01itpECG2kaLy3AYiCWxcRozQWyp9pNMDWePDI4QgVpbx5eo7a+mHFOqAxUQVeRhdrLjdFFQggqo5tqVeSS456UEQgWE4/RBboxyC4AKCEI9Wu9lUl8PEGAAV7NY4hyx8voAAAAASUVORK5CYII=')
+      } finally {
+        setIsLoading(false); 
+      }
+    };
+    fetchImage();
+  },[imageUrl]);
+
+  console.log(isLoading,imageUrl)
+
   return (
     <List.Item
       title={name}
       description={`${id}\n${email}\nAttended: ${attended ? 'Yes' : 'No'} | QR Generated: ${qrGenerated ? 'Yes' : 'No'} | Email Sent: ${emailSent ? 'Yes' : 'No'}`}
       left={() => 
         (
+        <View>
+        {isLoading && (
           <Avatar.Icon 
-            size={40} 
+            size={44} 
             icon="account" 
           />
+        )}
+        {image && (
+          <Image
+          source={{ uri: image }} 
+          style={{ 
+            width: 44, 
+            height: 44, 
+            borderRadius: 22, 
+            display: isLoading ? 'none' : 'flex' // Hide the image until it's loaded
+          }} 
+          onLoadEnd={() => {console.log(id,"loaded");setIsLoading(false)}} 
+        />
+        )}
+        </View>
       )}
       right={() => <DataTable.Cell>{id}</DataTable.Cell>}
       descriptionNumberOfLines={3}

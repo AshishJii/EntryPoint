@@ -1,6 +1,6 @@
 {
-  "name": "entrycheck",
-  "version": "1.0.0",
+  "name": "EventEasy",
+  "version": "1.1.0",
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
