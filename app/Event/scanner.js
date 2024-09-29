@@ -1,5 +1,5 @@
 import { useState, useRef, createContext, useEffect } from 'react';
-import { View, FlatList } from 'react-native';
+import { View, FlatList,Alert } from 'react-native';
 import { Text, Snackbar, FAB, List, Avatar } from 'react-native-paper';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import * as Sharing from 'expo-sharing';
@@ -24,7 +24,7 @@ export default function Scanner( {eventId} ) {
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const lastScannedTime = useRef(0);
-  const SCAN_DELAY = 1500;
+  const SCAN_DELAY = 1000;
   const flatListRef = useRef(null);
 
   useEffect(() => {
@@ -185,10 +185,20 @@ function ScannedItem({data}){
 
 function ShareButton({db}) {
   const fileSharer = async () => {
-    const res = await exportCSV(db);
-    await Sharing.shareAsync(res.fileUri);
+    const isSharingAvailable = await Sharing.isAvailableAsync();
+    if(isSharingAvailable){
+      try{
+        const res = await exportCSV(db);
+        await Sharing.shareAsync(res.fileUri);
+      } catch(error) {
+        console.log("Error sharing file",error);
+        Alert.alert("Sharing Failed", "An error occurred while trying to share the file.");
+      }
+    } else {
+      Alert.alert("Sharing unavailable","Sharing functionality is not available on this device.");
+    }
   };
-
+  
   return (
       <FAB
     icon="share-all"

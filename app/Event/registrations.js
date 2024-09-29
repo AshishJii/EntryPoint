@@ -155,7 +155,7 @@ const RegistrationItem = ({ registration }) => {
     fetchImage();
   },[imageUrl]);
 
-  console.log(isLoading,imageUrl)
+  // console.log(isLoading,imageUrl)
 
   return (
     <List.Item
