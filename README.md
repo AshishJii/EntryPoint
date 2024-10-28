@@ -17,7 +17,11 @@ EventEasy is a streamlined React Native app designed to make event management si
 
 ## Screenshots 📸
 
-> (Screenshots will be added later)
+<p float="left">
+   <img src="assets/registration_import_before.jpg" width="200">
+   <img src="assets/registration_import_after.jpg" width="200">
+   <img src="assets/scanner.gif" width="200">
+</p>
 
 ## Getting Started 🚀
 
